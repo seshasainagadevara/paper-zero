@@ -1,0 +1,59 @@
+syntax = "proto3";
+option optimize_for=SPEED;
+import "google/protobuf/any.proto";
+
+
+message Empty{}
+message UserData{
+    string name = 1;
+    string email = 2;
+    string proPic = 3;
+    string id= 4;
+}
+
+message UserToken{
+    string token=1;
+}
+enum Status{
+    UNAUTHORIZED =0;
+    SERVER_ERROR =1;
+    SUCCESS =2;
+    UNATHENTICATED = 3;
+}
+message RequestStatus{
+    optional UserData userData =1;
+    optional UserToken token =2;
+    string message=3;
+    Status statusType=4;
+}
+message Document{
+    string userId =1;
+    string docId = 2;
+    string title = 3;
+    string createdAt = 4;
+    string lastModifiedAt = 5;
+    repeated google.protobuf.Any content = 6;
+}
+message DocCreationRequest {
+    string createdAt=1;
+}
+
+message ListOfDocs{
+    repeated Document docs =1;
+}
+
+message HeaderUpdate{
+    string title=1;
+    string modifiedAt=2;
+    string docId=3;
+}
+
+
+
+service OnlineNotepadService{
+    rpc loginUser(UserData) returns (UserToken){}
+    rpc authenticateAndAuthorize(Empty) returns (RequestStatus){}
+    rpc createDocument(DocCreationRequest)returns (Document){}
+    rpc getDocuments(Empty)returns(stream ListOfDocs){}
+    rpc headerUpdate(HeaderUpdate) returns(stream HeaderUpdate){}
+}
